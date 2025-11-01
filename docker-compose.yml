@@ -1,0 +1,36 @@
+version: '3.5'
+
+services:
+  postgres_bc:
+    image: postgres:latest
+    container_name: "postgres_container"
+    env_file: .env
+    environment:
+      PGDATA: /data/postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db_backup:/backup
+      - ./db_data:/data/postgres
+    restart: unless-stopped
+    
+  postgres_res:
+    image: postgres:latest
+    container_name: "postgres_res"
+    env_file: .env
+    environment:
+      PGDATA: /data/postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./db_backup:/backup
+    restart: unless-stopped
+
+
+#для создания бэкапа
+#docker exec -it a4afca30ab47 bash
+#pg_dump -U postgres test > /backup/new.sql (pg_dumpall  - для полного бэкапа)
+
+#для восстановления из бэкапа
+#docker exec -it c6a318a42887 bash
+#psql -U postgres -x -f /backup/new.sql test2 (на 5432)
